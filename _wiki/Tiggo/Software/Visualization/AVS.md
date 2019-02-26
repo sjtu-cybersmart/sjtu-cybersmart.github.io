@@ -28,8 +28,6 @@ XVIZ就是把自主系统中生成的数据灌入到AVS中的工具（或者说�
 - Stream: 数据流，一系列带有时间戳的datum。一个stream就是一个遵循类似路径的语法的identifier（比如'/object/bounds'），用于存储同类数据。
   - Stream Name: 数据流的名字
   - Stream Type: datum的数据类型
-  ---
-  下面的是预先在协议中显示定义好的
   - Pose Stream: 一系列的位置信息，用来表示动作对象的位置包括和它相关的所有坐标系转换。
   - Geometry Types: 几何基本体
   - Variables: 存放数据的数组
@@ -47,5 +45,72 @@ XVIZ就是把自主系统中生成的数据灌入到AVS中的工具（或者说�
 - Encoding: xviz协议规范没有规定任何给定的编码，但是Xviz库支持JSON中的编码和解析。
 
 ## 简单的教程Demo（KITTI数据转换为XVIZ）
-- 下载kitti数据（每条数据都必须带有一个较为精确的时间戳）
+- 下载kitti数据（每条数据都必须带有一个较为精确的时间戳）[链接](https://avs.auto/#/xviz/getting-started/converting-to-xviz/downloading-data)
 - 将KITTI数据转换
+  - ego car数据处理
+    - 位置:
+      1. 定义metadata(stream的名字、类型)：
+      		const xb = xvizMetaBuilder;
+		xb.stream('/vehicle_pose').category('pose');
+      2. 每一帧都需要更新一次current pose：
+		xvizBuilder
+		 .pose('/vehicle_pose')
+		 .timestamp(pose.timestamp)
+		 .mapOrigin(pose.longitude, pose.latitude, pose.altitude)
+		 .orientation(pose.roll, pose.pitch, pose.yaw)
+		 .position(0, 0, 0);
+      3. 注意这里，地图的原点（mapOrigin）一直在不断变化，地图的原点就是车辆的经纬度，所以position一直保持（0，0，0）。在有些情况下，地图的原点被固定了，position就应该根据当前车辆的经纬度去改变。
+    - 加速度和速度：
+      1. 定义metadata(stream的名字、类型)：
+		const xb = xvizMetaBuilder;
+		xb.stream('/vehicle_pose').category('pose');//localization
+		
+		 .stream(this.VEHICLE_ACCELERATION)//accelerate
+		 .category('time_series')
+		 .type('float')
+		 .unit('m/s^2')
+		 
+		 .stream(this.VEHICLE_VELOCITY)//velocity
+		 .category('time_series')
+		 .type('float')
+		 .unit('m/s')
+        * 可以看到xvizMetaBuilder只定义了一个，然后将所有的streams信息一起注册好。
+        * this. VEHICLE_VELOCITY= /vehicle/velocity。在类的初始化里面就定义好了。
+        * unit()内部是一个字符数据，将来会显示在面板上。
+      2. 同样，每一帧需要更新速度加速度：
+		xvizBuilder
+		 .timeSeries(this.VEHICLE_VELOCITY)
+		 .timestamp(velocity.timestamp)
+		 .value(velocity['velocity-forward']);
+		
+		xvizBuilder
+		 .timeSeries(this.VEHICLE_ACCELERATION)
+		 .timestamp(acceleration.timestamp)
+		 .value(acceleration['acceleration-forward']);
+  - Object数据处理(来自于激光雷达的检测结果)
+    - 位置:
+      1. 定义metadata:
+		this.FIXTURE_TRANSFORM_POSE = {
+		  x: 0.81,
+		  y: -0.32,
+		  z: 1.73
+		};
+		.stream(this.TRACKLETS_TRACKING_POINT)
+		.category('primitive')
+ 		.type('circle')
+		.streamStyle({
+		  radius: 0.2,
+		  fill_color: '#FFFF00'
+		})
+		.pose(this.FIXTURE_TRANSFORM_POSE)
+
+        * 首先填写激光雷达和GPS中心的位置偏差FIXTURE_TRANSFORM_POSE，用来进行坐标转换，单位米。
+      2. 用圆表示objects:
+		xvizBuilder
+  		  // ...
+		  .primitive(this.TRACKLETS_TRACKING_POINT)
+		  .circle([tracklet.x, tracklet.y, tracklet.z])
+		  .id(tracklet.id);
+- 后面的不详细介绍了，上面列举的代码只是帮助理解，实际使用的时候可以直接下载源码！[链接](https://github.com/uber/xviz)
+      
+
