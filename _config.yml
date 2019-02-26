@@ -2,7 +2,7 @@
 #   Main Configs   #
 # ---------------- #
 baseurl:
-url: https://xwlu.github.io
+url: https://sjtu-cybersmart.github.io
 date_format: "ordinal"
 title: SJTU CyberSmart
 subtitle: "Wiki"
