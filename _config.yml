@@ -4,10 +4,10 @@
 baseurl:
 url: https://xwlu.github.io
 date_format: "ordinal"
-title: 朝花夕拾
-subtitle: "用代码记录生活"
-description: "陆一帆的个人博客"
-keywords: 陆一帆, Drake Lu, xwlu
+title: SJTU CyberSmart
+subtitle: "Wiki"
+description: "Wiki for CyberSmart team member!"
+keywords: Wiki, SJTU, CyberSmart
 timezone: Asia/Shanghai
 encoding: "utf-8"
 side_bar_repo_limit: 5
@@ -102,10 +102,10 @@ gitment:
         client_secret: b42a4178e5fd4a7cf63189ef4b1453b05c375709
 # https://github.com/gitalk/gitalk#install
 gitalk:
-    owner: xwlu
+    owner: sjtu-cybersmart
     repo: blog-comments
-    clientID: 8459d26e4a10635b4180
-    clientSecret: 56e8b10993e13417b81c6f4cfa2b1743ebce1f8c
+    clientID: 9ebb4f5eec908a6005b1
+    clientSecret: 95ec77d852831c4d7731743ecfe2b7d9f8641a0b
 # 在使用其它评论组件时可点击显示 Disqus
 lazy_load_disqus : false
 

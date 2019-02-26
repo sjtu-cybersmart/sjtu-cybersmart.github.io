@@ -1,4 +1,4 @@
-# 用代码记录生活
+# Cybersmart学习资料
 
-[我的个人博客](https://xwlu.github.io)
+[Wiki地址](https://sjtu-cybersmart.github.io)
 
