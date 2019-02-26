@@ -80,21 +80,21 @@ XVIZ就是把自主系统中生成的数据灌入到AVS中的工具（或者说�
           .type('float')
           .unit('m/s')
       ```
-        ***可以看到xvizMetaBuilder只定义了一个，然后将所有的streams信息一起注册好。***
-        ***this. VEHICLE_VELOCITY= /vehicle/velocity。在类的初始化里面就定义好了。***
-        ***unit()内部是一个字符数据，将来会显示在面板上。***
+        - ***可以看到xvizMetaBuilder只定义了一个，然后将所有的streams信息一起注册好。***
+        - ***this. VEHICLE_VELOCITY= /vehicle/velocity。在类的初始化里面就定义好了。***
+        - ***unit()内部是一个字符数据，将来会显示在面板上。***
       2. 同样，每一帧需要更新速度加速度：
       ```
         xvizBuilder
           .timeSeries(this.VEHICLE_VELOCITY)
           .timestamp(velocity.timestamp)
           .value(velocity['velocity-forward']);
-        
         xvizBuilder
           .timeSeries(this.VEHICLE_ACCELERATION)
           .timestamp(acceleration.timestamp)
           .value(acceleration['acceleration-forward']);
       ```
+
   - Object数据处理(来自于激光雷达的检测结果)
     - 位置:
       1. 定义metadata:
