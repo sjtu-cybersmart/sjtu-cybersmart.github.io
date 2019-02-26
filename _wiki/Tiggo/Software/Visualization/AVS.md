@@ -1,3 +1,11 @@
+---
+layout: wiki
+title: AVS
+categories: [wiki]
+description: AVS
+keywords: wiki, Tiggo, visualization, AVS
+---
+
 # 介绍
 - AVS是一个新的用来描述和可视化自主车辆的感知，运动，和规划数据的标准。
 - 它提供一个功能强大的基于Web的应用程序。

@@ -1,5 +1,5 @@
 ---
-layout: post
+layout: wiki
 title: Tiggo学习目录
 categories: [wiki]
 description: Tiggo相关资料目录
