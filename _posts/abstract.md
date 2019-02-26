@@ -1,7 +1,7 @@
 ---
 layout: post
 title: 学习目录
-categories: [wiki]
+categories: [blog]
 description: 相关资料目录
 keywords: Tiggo
 ---
