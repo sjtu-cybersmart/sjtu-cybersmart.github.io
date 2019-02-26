@@ -9,4 +9,4 @@ keywords: wiki, software, visualization
 # Tiggo可视化方案：
 ---
 - ## RVIZ
-- ## [AVS]()
+- ## [AVS](https://sjtu-cybersmart.github.io/wiki/Tiggo/Software/Visualization/AVS)
