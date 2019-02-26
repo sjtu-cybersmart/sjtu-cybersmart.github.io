@@ -81,7 +81,7 @@ collections:
         output: true
         permalink: /wiki/:path/
 
-repository: xwlu/xwlu.github.io
+repository: xwlu/sjtu-cybersmart.github.io
 
 # ---------------- #
 #      Comments    #
