@@ -6,5 +6,6 @@ description: some word here
 keywords: wiki, guide
 ---
 
-[Learning Guide]()
-[Developing Guide]()
+### [Learning Guide](https://sjtu-cybersmart.github.io/wiki/Guide/developing-guide/)
+
+### [Developing Guide](https://sjtu-cybersmart.github.io/wiki/Guide/developing-guide/)
