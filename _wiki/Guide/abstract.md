@@ -6,6 +6,9 @@ description: some word here
 keywords: wiki, guide
 ---
 
-### [学习指南](https://sjtu-cybersmart.github.io/wiki/Guide/developing-guide/)
+## 前言
+### [学习指南](https://sjtu-cybersmart.github.io/wiki/Guide/learning-guide/)
+### [开发指南](https://sjtu-cybersmart.github.io/wiki/Guide/developing-guide/)
 
-### [开发指南](https://sjtu-cybersmart.github.io/wiki/Guide/environment-configuration/)
+## 开始干活
+### [环境配置](https://sjtu-cybersmart.github.io/wiki/Guide/environment-configuration/)
