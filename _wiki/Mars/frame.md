@@ -37,7 +37,7 @@ keywords: wiki, learning guide
 ------
 
 # Topic
-![Frame](https://github.com/sjtu-cybersmart/sjtu-cybersmart.github.io/blob/master/_wiki/Mars/pic/frame.png)
+![Frame](/_wiki/Mars/pic/frame.png)
 - ### ① /trajectory
 - ### ② /grid_map
 - ### ③ /object
