@@ -3,11 +3,10 @@ layout: wiki
 title: Frame of Mars Plan
 categories: [wiki]
 description: The Frame of Vehicle designed for Mars plan.
-keywords: wiki, learning guide
+keywords: learning guide
 ---
 
 # The Frame Of The Entire Vehcile
-------
 - ### Communication
   - #### multimaster
 - ### Planner
