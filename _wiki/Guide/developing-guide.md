@@ -11,7 +11,7 @@ keywords: wiki, learning guide
 ### 代码千万条，格式第一条。写码不规范，学弟泪两行。
 
 ## 编程规范
-- 具体内容参考[谷歌编程手册](https://google.github.io/styleguide/cppguide.html)
+- 具体内容参考[谷歌编程手册](https://zh-google-styleguide.readthedocs.io/en/latest/google-cpp-styleguide/contents/)
 - 请尽量遵守编程规范进行编程，或者至少保持学长的优良编程风格，代码可读性是决定代码价值最重要的一点！
 
 ## git操作
