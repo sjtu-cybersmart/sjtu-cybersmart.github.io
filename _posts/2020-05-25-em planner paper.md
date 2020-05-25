@@ -5,8 +5,12 @@ categories: [blog]
 description: Apollo EM Planner Paper
 keywords: apollo
 ---
-
 # 简介
+- EM Planner的理论介绍
+
+---
+
+# 背景
 - 论文地址：https://arxiv.org/abs/1807.08048
 - 论文类型：Motion Planning
 
