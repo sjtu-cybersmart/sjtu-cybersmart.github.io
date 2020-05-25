@@ -5,13 +5,10 @@ categories: [blog]
 description: Apollo EM Planner Paper
 keywords: apollo
 ---
-
+# 简介
 论文地址：https://arxiv.org/abs/1807.08048
 论文类型：Motion Planning
 
-目录：
-@[toc]
-# 简介
 EM Planner是Apollo面向L4的实时运动规划算法，该算法首先通过顶层多车道策略，选择出一条参考路径，再根据这条参考线，在Frenet坐标系下，进行车道级的路径和速度规划，规划主要通过Dynamic Programming和基于样条的Quadratic Programming实现。EM Planner充分考虑了无人车安全性、舒适性、可扩展性的需求，通过考虑交通规则、障碍物决策、轨迹光滑性等要求，可适应高速公路、低速城区场景的规划需求。通过Apollo仿真和在环测试，EM Planner算法体现了高度的可靠性，和低耗时性。
 ![\[](https://img-blog.csdnimg.cn/20200525173022240.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM1NTAzOTcx,size_16,color_FFFFFF,t_70)
 
