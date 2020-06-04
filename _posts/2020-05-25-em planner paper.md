@@ -5,6 +5,7 @@ categories: [blog]
 description: Apollo EM Planner Paper
 keywords: apollo
 ---
+
 # 简介
 - EM Planner的理论介绍
 
@@ -15,14 +16,14 @@ keywords: apollo
 - 论文类型：Motion Planning
 
 - EM Planner是Apollo面向L4的实时运动规划算法，该算法首先通过顶层多车道策略，选择出一条参考路径，再根据这条参考线，在Frenet坐标系下，进行车道级的路径和速度规划，规划主要通过Dynamic Programming和基于样条的Quadratic Programming实现。EM Planner充分考虑了无人车安全性、舒适性、可扩展性的需求，通过考虑交通规则、障碍物决策、轨迹光滑性等要求，可适应高速公路、低速城区场景的规划需求。通过Apollo仿真和在环测试，EM Planner算法体现了高度的可靠性，和低耗时性。
-- ![\[](https://img-blog.csdnimg.cn/20200525173022240.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM1NTAzOTcx,size_16,color_FFFFFF,t_70)
+- ![picture1](https://img-blog.csdnimg.cn/20200525173022240.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM1NTAzOTcx,size_16,color_FFFFFF,t_70)
 
 ---
 
 # 多车道EM Planner框架
 
 ## 整体框架
-- ![\]](https://img-blog.csdnimg.cn/20200525172503406.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM1NTAzOTcx,size_16,color_FFFFFF,t_70)
+- ![picture2](https://img-blog.csdnimg.cn/20200525172503406.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM1NTAzOTcx,size_16,color_FFFFFF,t_70)
 
 - 所有规划需要的信息在EM Planner的顶层汇集，然后参考线生成器会生成一些基于障碍物和交通规则的候选车道级参考线，这个过程主要是依赖于高精度地图和Routing模块给出的全局规划结果。以下是车道级的规划过程：
   - 1. 首先会基于给定参考线生成Frenet坐标系，通过给定参考线将所有的自车信息和环境信息转换到参考线下的Frenet坐标系。
@@ -35,6 +36,7 @@ keywords: apollo
 
 ## 路径-速度迭代算法
 - 在Frenet坐标下的轨迹规划实际上带约束的3D最优求解问题。该问题一般有两种求解方法：直接3D最优化求解和路径-速度解耦求解。直接方法[【4】](http://ieeexplore.ieee.org/iel5/5967842/5979525/05980223.pdf)[【5】](https://ieeexplore.ieee.org/document/5354448)试图在SLT坐标系下使用轨迹采样或Lattice搜索,这些方法都受到搜索复杂度的限制，因此搜索结果是次优的。而路径-速度解耦规划会分别求解路径和速度的最优解。速度的生成将会在生产的路径上进行[【6】](https://www.researchgate.net/publication/308692093_Tunable_and_Stable_Real-Time_Trajectory_Planning_for_Urban_Autonomous_Driving)。虽然结果可能也不是最优的，但会在速度和路径分别求解时更加灵活。
+
 - EM Planner迭代地进行路径和速度最优求解，通过估计和来向、低速障碍物的交互，上一帧的速度规划将有助于下一帧的路径规划。然后将路径规划结果再交给速度最优求解器来推算出一个最优的速度结果。
 
 ## 决策和交通规则约束
@@ -45,7 +47,8 @@ keywords: apollo
 # 车道级EM PLanner框架
 
 ## 整体框架
-- ![在这里插入图片描述](https://img-blog.csdnimg.cn/20200525173054198.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM1NTAzOTcx,size_16,color_FFFFFF,t_70)
+- ![picture3](https://img-blog.csdnimg.cn/20200525173054198.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM1NTAzOTcx,size_16,color_FFFFFF,t_70)
+
 - 框架包括了一帧规划中的两个E-step和两个M-step，轨迹信息将会在前后两帧中传递，以下是整个车道级规划的流程：
   - 1. 在第一个E-step中，障碍物会被投影到车道Frenet坐标系，障碍物包括了静态障碍物和动态障碍物。静态障碍物会直接从笛卡尔坐标系转换到Frenet坐标系，而动态的信息则以其运动轨迹来描述。通过上一帧的预测信息，和自车的运动信息，可以估算自车和动态障碍物在每个时间点的交互情况，轨迹重叠的部分会被映射到Frenet坐标系中。初次之外，在最优路径求解过程中，动态障碍物的出现会最终导致自车做出避让的决策。因此，出于安全的考虑，SL投影只考虑低速和来向障碍物，而对于高速的动态障碍物，EM Planner的平行变道策略会考虑这种情景。
   - 2. 在第二个E-step，所有的障碍物都会在ST中与生成的速度信息进行估计，如果对应的ST中重叠部分，那么对应区域将会在ST中进行重新生成。
@@ -61,7 +64,8 @@ keywords: apollo
 
 ### ST投影
 - ST投影用于帮助我们估计自车的速度规划。当生成了一条光滑的路径以后，与自车有交互的动态障碍物和静态障碍物都会被投影到路径上，同理，这种交互也定义为包围盒的重叠。如图5，这是一个ST图投影案例。
-- ![在这里插入图片描述](https://img-blog.csdnimg.cn/20200525173227510.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM1NTAzOTcx,size_16,color_FFFFFF,t_70)
+
+- ![picture4](https://img-blog.csdnimg.cn/20200525173227510.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM1NTAzOTcx,size_16,color_FFFFFF,t_70)
 
 - 红色区域表示在2s处距离自车40m远切入规划路径的动态障碍物ST信息，绿色表示在自车后的动态障碍物ST信息，M-step将会在剩下的区域找到可行光滑最优解。
 
@@ -69,34 +73,34 @@ keywords: apollo
 - M-step求解Frenet坐标系下的最优路径规划，实际上在一个非凸的区间（从左和从右避让是两个局部最优情景）就是找到一个最优的$l=f(s)$方程。主要包括两步：基于Dynamic Programming的路径决策和基于样条的路径规划。
 
 - 基于Dynamic Programming的路径步骤提供一条粗略的路径信息，其可以带来可行通道和绕障决策，如图6所示，这一步包括Lattice采样、代价函数、Dynamic Programming搜索。
-- ![在这里插入图片描述](https://img-blog.csdnimg.cn/20200525173236269.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM1NTAzOTcx,size_16,color_FFFFFF,t_70)
+- ![picture5](https://img-blog.csdnimg.cn/20200525173236269.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM1NTAzOTcx,size_16,color_FFFFFF,t_70)
 
 - Lattice采样基于Frenet坐标系，多行的点在撒在自车前。如图7所示，行与行之间的点使用五次方多项式连接，而行与行之间的间隔取决于自车速度、道路结构、是否换道等等。出于安全考虑，路径总长可以达到200m或者覆盖8s的行驶长度。
-- ![在这里插入图片描述](https://img-blog.csdnimg.cn/20200525173244890.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM1NTAzOTcx,size_16,color_FFFFFF,t_70)
+- ![picture6](https://img-blog.csdnimg.cn/20200525173244890.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM1NTAzOTcx,size_16,color_FFFFFF,t_70)
 
 - 每段Lattice路径的代价通过光滑程度、障碍物避让、车道代价来评价：
-- ![在这里插入图片描述](https://img-blog.csdnimg.cn/20200525173254311.png)
+- ![picture7](https://img-blog.csdnimg.cn/20200525173254311.png)
 
 - 而光滑程度又通过以下方程来衡量，一阶导表示朝向偏差，二阶导表示曲率，三阶导表示曲率导数：
-- ![在这里插入图片描述](https://img-blog.csdnimg.cn/2020052517330227.png)
+- ![picture8](https://img-blog.csdnimg.cn/2020052517330227.png)
 - 障碍物的代价由以下方程给出，方程中的d由自车bounding box到障碍物bounding box的距离表示。
-- ![在这里插入图片描述](https://img-blog.csdnimg.cn/20200525173310795.png)
+- ![picture9](https://img-blog.csdnimg.cn/20200525173310795.png)
 - 车道代价由以下方程给出，主要是考虑在道路上与否以及与参考线之间的差异，一般是与车道中心线的差异：
-- ![在这里插入图片描述](https://img-blog.csdnimg.cn/2020052517331917.png)
+- ![picture11](https://img-blog.csdnimg.cn/2020052517331917.png)
 
 ## 样条QP路径（M-step）
 - 基于样条的路径可以理解为是Dynamic Programming更精细的版本。通过DP采样出的路径生成一条可通行通道，然后在通道中利用基于Quadratic Programming的样条曲线生产光滑路径。具体实例如图8所示，步骤流程可由图9所示：
-- ![在这里插入图片描述](https://img-blog.csdnimg.cn/20200525173326992.png)
-- ![在这里插入图片描述](https://img-blog.csdnimg.cn/20200525173333573.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM1NTAzOTcx,size_16,color_FFFFFF,t_70)
+- ![picture12](https://img-blog.csdnimg.cn/20200525173326992.png)
+- ![picture13](https://img-blog.csdnimg.cn/20200525173333573.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM1NTAzOTcx,size_16,color_FFFFFF,t_70)
 
 - QP的目标函数为：
-- ![在这里插入图片描述](https://img-blog.csdnimg.cn/2020052517334096.png)
+- ![picture14](https://img-blog.csdnimg.cn/2020052517334096.png)
 - 其中$g(s)$为DP规划的路径，$f(s)$的一阶导表示朝向、二阶导表示曲率、三阶导表示曲率的导数。该函数描述了避让障碍物和曲线光滑性之间的权衡。
 
 - QP的约束包括边界约束和动力学可行性。这些约束都会施加在每个s处，通过限制l来将车辆限制在车道内。由于EM Planner使用的是自行车模型，因此这样对l的限制也是不够的。如图10所示，为了使得边界约束变凸并且线性，在自车的前后两端各增加了一个半圆。前轮到后轮中心的距离用$l_f$表示，车宽用w表示，因此车的左前角的横向位置可以用以下方程给出：
-- ![在这里插入图片描述](https://img-blog.csdnimg.cn/20200525173348667.png)
+- ![picture15](https://img-blog.csdnimg.cn/20200525173348667.png)
 - 通过线性化可以变为：
-- ![在这里插入图片描述](https://img-blog.csdnimg.cn/20200525173358933.png)
+- ![picture16](https://img-blog.csdnimg.cn/20200525173358933.png)
 
 - 同理，其余三个角的位置都可以被线性化，显然因为$\theta$足够小，小于pi/12，因此可以这样线性化。
 
@@ -106,15 +110,15 @@ keywords: apollo
 
 ## DP速度求解（M-step）
 - M-step的速度规划是在ST图中求解最优速度规划，即求解出最优函数$S(t)$。与求解最优路径相似，在ST图中求解最优速度规划也是非凸的最优化问题。同样也采用Dynamic Programming配合样条曲线Quadratic Programming来找到光滑速度规划。图12是速度求解的pipeline：
-- ![在这里插入图片描述](https://img-blog.csdnimg.cn/20200525173409360.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM1NTAzOTcx,size_16,color_FFFFFF,t_70)
+- ![picture17](https://img-blog.csdnimg.cn/20200525173409360.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM1NTAzOTcx,size_16,color_FFFFFF,t_70)
 
 - DP速度求解包括代价函数、ST栅格图以及Dynamic Programming搜索。生成的结果包括分段线性的速度规划、可通行通道以及障碍物速度决策。如图11所示，该结果在QP中用来作为参考速度规划，通过该参考速度生成凸的区域。
-- ![在这里插入图片描述](https://img-blog.csdnimg.cn/20200525173421347.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM1NTAzOTcx,size_16,color_FFFFFF,t_70)
+- ![picture18](https://img-blog.csdnimg.cn/20200525173421347.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM1NTAzOTcx,size_16,color_FFFFFF,t_70)
 
 - 在栅格图中，使用**有限差分法**来估计速度、加速度和jerk：
-- ![在这里插入图片描述](https://img-blog.csdnimg.cn/20200525173431186.png)
+- ![picture19](https://img-blog.csdnimg.cn/20200525173431186.png)
 - 从DP生成的速度中选择出最优的一条的方法是最小化以下的代价函数：
-- ![在这里插入图片描述](https://img-blog.csdnimg.cn/20200525173438832.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM1NTAzOTcx,size_16,color_FFFFFF,t_70)
+- ![picture20](https://img-blog.csdnimg.cn/20200525173438832.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM1NTAzOTcx,size_16,color_FFFFFF,t_70)
 
 - 第一项是速度误差，g用来惩罚与$V_ref$的不同的误差。第二项、第三项用来描述曲线的光滑程度。最后一项用来描述障碍物代价，以到障碍物的距离来衡量。
 
@@ -122,14 +126,14 @@ keywords: apollo
 
 ## QP速度求解（M-step）
 - 因为分段线性的速度规划不能满足动力学的要求，所以需要使用Quadratic Programming来填补动力学空缺。图13是样条曲线QP速度求解的pipeline：
-- ![在这里插入图片描述](https://img-blog.csdnimg.cn/20200525173445876.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM1NTAzOTcx,size_16,color_FFFFFF,t_70)
+- ![picture21](https://img-blog.csdnimg.cn/20200525173445876.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM1NTAzOTcx,size_16,color_FFFFFF,t_70)
 
 - QP速度求解包括三部分：代价函数、线性约束以及样条曲线QP求解器。
 - 除了初始条件约束以外，主要有以下的边界约束：
-- ![在这里插入图片描述](https://img-blog.csdnimg.cn/20200525173453674.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM1NTAzOTcx,size_16,color_FFFFFF,t_70)
+- ![picture22](https://img-blog.csdnimg.cn/20200525173453674.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM1NTAzOTcx,size_16,color_FFFFFF,t_70)
 
 - 第一个约束是单调性约束；第二、第三、第四约束主要是交通规则和车辆动力学约束。通过约束、cost函数计算以后，spline QP speed会生成一条如图14中的光滑可行的速度规划。
-- ![在这里插入图片描述](https://img-blog.csdnimg.cn/2020052517350230.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM1NTAzOTcx,size_16,color_FFFFFF,t_70)
+- ![picture23](https://img-blog.csdnimg.cn/2020052517350230.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM1NTAzOTcx,size_16,color_FFFFFF,t_70)
 - 结合路径规划，EM Planner最终会生成一条光滑轨迹。
 
 ## 解QP问题的说明
@@ -144,7 +148,7 @@ keywords: apollo
 
 # 案例分析
 - 图15展示了EM Planner在规划周期内，帧与帧之间完成最优轨迹规划的过程。
-- ![在这里插入图片描述](https://img-blog.csdnimg.cn/20200525173513406.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM1NTAzOTcx,size_16,color_FFFFFF,t_70)
+- ![picture24](https://img-blog.csdnimg.cn/20200525173513406.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM1NTAzOTcx,size_16,color_FFFFFF,t_70)
 
 - 假设自车以10m/s的速度行进，一动态障碍物沿着相反方向朝着我们以同样10m/s的速度驶来，EM Planner按以下步骤迭代生成速度和路径规划：
   - 1. 历史规划（图15-a）：在动态障碍物出现之前，自车以恒定速度10m/s向前行驶。
