@@ -11,8 +11,10 @@ keywords: Wiki
 
 - ### 基础配置
   - 操作系统：ubuntu16.04 / ubuntu18.04
+    - 用windwows也可以，就是可能会遇到坑然后解决不了，因为大部分人还是用ubuntu进行学习和开发。
   - 编程语言：[Anaconda](https://docs.anaconda.com/anaconda/install/) + python3.7
     - anaconda是python运行环境，安装好后可以启动任意版本的python环境，所以只要安装了anaconda就等于安装好了python
+    - 用C++也可以，就是代码写起来难度更大；后面搞深度学习还是要切回python；特别是大作业结合了深度学习和经典算法内容，如果是分别用C++和Python实现的，难以统一起来完成大作业，所以建议直接python从头写到底。
   - 必备python库：[Opend3D](https://github.com/intel-isl/Open3D)
     - 点上面的链接进入github仓库页面，按照下面的install操作进行安装。
 - ### 深度学习配置
