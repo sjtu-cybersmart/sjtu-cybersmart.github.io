@@ -34,7 +34,8 @@ keywords: Wiki
 
 # 数据集下载
 - [modelnet40_normal_resampled](https://shapenet.cs.stanford.edu/media/modelnet40_normal_resampled.zip)
-- [KITTI depth dataset(Optional)](http://www.cvlibs.net/datasets/kitti/eval_depth_all.php)
+- [KITTI depth dataset(Optional)](http://www.cvlibs.net/datasets/kitti/eval_depth_all.php)好像只需要下载下面这个数据集就行
+  - [Download annotated depth maps data set (14 GB)](http://www.cvlibs.net/download.php?)
 - [KITTI 3D object detection](http://www.cvlibs.net/datasets/kitti/eval_object.php?obj_benchmark=3d)下载如下几个数据集
   - [Download left color images of object data set(12 GB)](http://www.cvlibs.net/download.php?file=data_object_image_2.zip)
   - [Download Velodyne point clouds, if you want to use laser information (29 GB)](http://www.cvlibs.net/download.php?file=data_object_velodyne.zip)
